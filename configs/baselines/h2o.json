@@ -1,0 +1,7 @@
+{
+  "strategy": "h2o",
+  "target_tokens": 512,
+  "params": {
+    "ema_decay": 0.9
+  }
+}

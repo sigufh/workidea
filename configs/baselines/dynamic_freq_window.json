@@ -1,0 +1,9 @@
+{
+  "strategy": "dynamic_freq_window",
+  "target_tokens": 512,
+  "params": {
+    "window_size": 512,
+    "basekv_ratio": 0.4,
+    "outlier_z": 2.0
+  }
+}

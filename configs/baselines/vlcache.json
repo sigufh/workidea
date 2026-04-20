@@ -1,0 +1,8 @@
+{
+  "strategy": "vlcache",
+  "target_tokens": 512,
+  "params": {
+    "text_ratio": 0.35,
+    "keep_all_special": true
+  }
+}

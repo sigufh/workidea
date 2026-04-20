@@ -1,0 +1,7 @@
+{
+  "strategy": "pyramid",
+  "target_tokens": 512,
+  "params": {
+    "min_ratio": 0.4
+  }
+}

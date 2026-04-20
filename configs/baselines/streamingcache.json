@@ -1,0 +1,9 @@
+{
+  "strategy": "streamingcache",
+  "target_tokens": 512,
+  "params": {
+    "sink_size": 16,
+    "window_size": 512,
+    "anchor_interval": 64
+  }
+}

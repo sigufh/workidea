@@ -1,0 +1,7 @@
+{
+  "strategy": "snap",
+  "target_tokens": 512,
+  "params": {
+    "recent_bias": 0.2
+  }
+}
