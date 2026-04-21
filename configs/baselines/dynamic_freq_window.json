@@ -3,7 +3,13 @@
   "target_tokens": 512,
   "params": {
     "window_size": 512,
-    "basekv_ratio": 0.4,
-    "outlier_z": 2.0
+    "min_window_size": 192,
+    "basekv_ratio": 0.45,
+    "outlier_budget_ratio": 0.25,
+    "low_freq_ratio": 0.25,
+    "outlier_z": 1.8,
+    "recency_boost": 0.35,
+    "outlier_min_keep": 8,
+    "text_min_ratio": 0.1
   }
 }

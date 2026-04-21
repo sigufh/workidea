@@ -1,4 +1,5 @@
 from .dynamic_freq_window import DynamicFreqWindowStrategy
+from .fullkv import FullKVStrategy
 from .h2o import H2OStrategy
 from .pyramidkv import PyramidKVStrategy
 from .snapkv import SnapKVStrategy
@@ -12,4 +13,5 @@ __all__ = [
     "VLCacheStrategy",
     "StreamingCacheStrategy",
     "DynamicFreqWindowStrategy",
+    "FullKVStrategy",
 ]

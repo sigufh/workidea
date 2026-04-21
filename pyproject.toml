@@ -11,6 +11,15 @@ dependencies = [
   "numpy>=1.24"
 ]
 
+[project.optional-dependencies]
+real = [
+  "torch>=2.2",
+  "transformers>=4.48",
+  "accelerate>=0.33",
+  "huggingface_hub>=0.24",
+  "decord>=0.6.0",
+]
+
 [project.scripts]
 kvbench-offline = "kvbench.eval.cli:main"
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from kvbench.strategies import (
     DynamicFreqWindowStrategy,
+    FullKVStrategy,
     H2OStrategy,
     PyramidKVStrategy,
     SnapKVStrategy,
@@ -25,6 +26,8 @@ def build_strategy(name: str, **kwargs) -> KVStrategy:
         return StreamingCacheStrategy(**kwargs)
     if key in {"dynamic_freq_window", "dfw", "yours"}:
         return DynamicFreqWindowStrategy(**kwargs)
+    if key in {"fullkv", "full_kv", "full"}:
+        return FullKVStrategy(**kwargs)
     raise ValueError(f"Unknown strategy: {name}")
 
 
@@ -36,4 +39,5 @@ def list_strategies() -> list[str]:
         "vlcache",
         "streamingcache",
         "dynamic_freq_window",
+        "fullkv",
     ]

@@ -1,0 +1,2 @@
+{"id":"video_001","video":"/path/to/video_001.mp4","prompt":"请基于视频内容回答：主角在何时进入房间，随后做了什么？"}
+{"id":"video_002","video":"/path/to/video_002.mp4","prompt":"请总结视频中的关键事件，并回答最后一次出现的交通工具是什么。"}

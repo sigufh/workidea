@@ -59,6 +59,8 @@ def load_trace_npz(path: str | Path) -> tuple[list[KVCacheState], list[np.ndarra
     - sink_idx: [k]
     - special_idx: [m]
     - history: [steps, tokens, hist]
+    - valid_lens: [steps] (optional)
+    - token_ids: [tokens] (optional)
     """
     data = np.load(path)
     keys = data["keys"]
@@ -66,6 +68,8 @@ def load_trace_npz(path: str | Path) -> tuple[list[KVCacheState], list[np.ndarra
     attn = data["attn"]
     history = data["history"] if "history" in data else None
     modality = data["modality"] if "modality" in data else np.zeros(keys.shape[3], dtype=np.int64)
+    valid_lens = data["valid_lens"] if "valid_lens" in data else None
+    token_ids = data["token_ids"] if "token_ids" in data else np.arange(keys.shape[3], dtype=np.int64)
     sink_idx = set(data["sink_idx"].tolist()) if "sink_idx" in data else set()
     special_idx = set(data["special_idx"].tolist()) if "special_idx" in data else set()
 
@@ -74,26 +78,27 @@ def load_trace_npz(path: str | Path) -> tuple[list[KVCacheState], list[np.ndarra
     histories: list[np.ndarray] = []
 
     for s in range(steps):
+        cur_tokens = int(valid_lens[s]) if valid_lens is not None else int(tokens)
         metas = [
             TokenMeta(
-                token_id=i,
+                token_id=int(token_ids[i]) if i < len(token_ids) else i,
                 timestep=i,
                 modality=("text" if int(modality[i]) == 1 else "vision"),
                 is_sink=(i in sink_idx),
                 is_special_memory=(i in special_idx),
             )
-            for i in range(tokens)
+            for i in range(cur_tokens)
         ]
         layer_list = [
             LayerKV(
-                keys=keys[s, l],
-                values=values[s, l],
-                attention_scores=attn[s, l],
+                keys=keys[s, l, :, :cur_tokens, :],
+                values=values[s, l, :, :cur_tokens, :],
+                attention_scores=attn[s, l, :, :cur_tokens],
                 importance_ema=None,
             )
             for l in range(layers)
         ]
         states.append(KVCacheState(layers=layer_list, token_meta=metas, current_step=s))
-        histories.append(history[s] if history is not None else None)
+        histories.append(history[s, :cur_tokens] if history is not None else None)
 
     return states, histories

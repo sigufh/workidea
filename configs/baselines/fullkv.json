@@ -1,0 +1,5 @@
+{
+  "strategy": "fullkv",
+  "target_tokens": 512,
+  "params": {}
+}
