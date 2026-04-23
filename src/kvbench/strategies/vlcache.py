@@ -31,6 +31,15 @@ class VLCacheStrategy(KVStrategy):
             np.array(special, dtype=np.int64),
         )
 
+    @staticmethod
+    def _pick_from_candidates(scores: np.ndarray, candidates: np.ndarray, k: int) -> np.ndarray:
+        if candidates.size == 0 or k <= 0:
+            return np.array([], dtype=np.int64)
+        k = min(k, candidates.size)
+        local_scores = scores[candidates]
+        local_pick = topk_indices(local_scores, k)
+        return np.sort(candidates[local_pick])
+
     def plan(self, state: KVCacheState, ctx: CompressionContext) -> CompressionPlan:
         per_layer: dict[int, np.ndarray] = {}
         text_idx, vision_idx, special = self._modality_indices(state)
@@ -47,14 +56,18 @@ class VLCacheStrategy(KVStrategy):
             else:
                 scores = layer.attention_scores.mean(axis=0).astype(np.float32)
 
-            remain = max(0, budget - special.size)
-            text_budget = min(text_idx.size, int(remain * self.text_ratio))
-            vision_budget = min(vision_idx.size, remain - text_budget)
+            valid_special = special[special < n]
+            valid_text = text_idx[text_idx < n]
+            valid_vision = vision_idx[vision_idx < n]
 
-            text_pick = text_idx[topk_indices(scores[text_idx], text_budget)] if text_idx.size > 0 and text_budget > 0 else np.array([], dtype=np.int64)
-            vision_pick = vision_idx[topk_indices(scores[vision_idx], vision_budget)] if vision_idx.size > 0 and vision_budget > 0 else np.array([], dtype=np.int64)
+            remain = max(0, budget - valid_special.size)
+            text_budget = min(valid_text.size, int(remain * self.text_ratio))
+            vision_budget = min(valid_vision.size, remain - text_budget)
 
-            keep = merge_unique(special, text_pick, vision_pick)
+            text_pick = self._pick_from_candidates(scores, valid_text, text_budget)
+            vision_pick = self._pick_from_candidates(scores, valid_vision, vision_budget)
+
+            keep = merge_unique(valid_special, text_pick, vision_pick)
             if keep.size < budget:
                 fill = topk_indices(scores, budget)
                 keep = merge_unique(keep, fill)

@@ -1,8 +1,15 @@
 .venv/
 models/
 data/
+runs/
+traces/
+reports/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 *.egg-info/
+*.npz
+*.log
+*.progress.json
+.DS_Store
