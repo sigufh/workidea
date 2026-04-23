@@ -397,6 +397,51 @@ python scripts/run_real_experiment_4gpu.py \
 
 ## 4. 完整数据集真实论文实验（大盘复现）
 
+### 4.0 全量数据集下载与目录准备
+
+MMBench-Video-10G 需要你先拿到官方发布的数据文件（`MMBench-Video_q.json`、`MMBench-Video_a.json`、视频文件）。
+
+推荐目录结构：
+
+```text
+data/MMBench-Video-10G/
+  MMBench-Video_q.json
+  MMBench-Video_a.json
+  video_small/            # 或 video/（完整视频目录）
+    *.mp4
+```
+
+如果你拿到的是压缩包，在仓库根目录执行（按你的实际文件名替换）：
+
+```bash
+mkdir -p data/MMBench-Video-10G
+tar -xvf MMBench-Video-10G_video_small.tar -C data/MMBench-Video-10G/
+tar -xvf MMBench-Video-10G_annotations.tar -C data/MMBench-Video-10G/
+```
+
+快速校验：
+
+```bash
+python - <<'PY'
+import json, os, glob
+root = "data/MMBench-Video-10G"
+q = os.path.join(root, "MMBench-Video_q.json")
+a = os.path.join(root, "MMBench-Video_a.json")
+vsmall = os.path.join(root, "video_small")
+vfull = os.path.join(root, "video")
+print("q_exists:", os.path.exists(q))
+print("a_exists:", os.path.exists(a))
+if os.path.exists(vsmall):
+    print("video_small_mp4:", len(glob.glob(os.path.join(vsmall, "*.mp4"))))
+if os.path.exists(vfull):
+    print("video_mp4:", len(glob.glob(os.path.join(vfull, "*.mp4"))))
+if os.path.exists(q):
+    print("questions:", len(json.load(open(q, "r", encoding="utf-8"))))
+if os.path.exists(a):
+    print("answers:", len(json.load(open(a, "r", encoding="utf-8"))))
+PY
+```
+
 ### 4.1 构建全量 manifest（不设上限）
 
 如果你有更大磁盘，建议直接全量：
